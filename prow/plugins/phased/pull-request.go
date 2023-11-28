@@ -55,6 +55,8 @@ func handlePR(c Client, trigger plugins.Trigger, pr github.PullRequestEvent) err
 
 	switch pr.Action {
 	case github.PullRequestActionLabeled:
+		// TODO assume it is not removed
+		// TODO handle case if both were added by the same event
 		if pr.Label.Name == labels.LGTM {
 			l, err := c.GitHubClient.GetIssueLabels(org, repo, pr.PullRequest.Number)
 			if err != nil {
@@ -109,6 +111,8 @@ func listRequested(c Client, pr *github.PullRequest, baseSHA string, requestedJo
 	if !(org == "kubevirt" && repo == "kubevirt") && !(org == "org" && repo == "repo") {
 		return nil
 	}
+
+	// TODO check also if closed / merged ?
 
 	// If the PR is not mergeable (e.g. due to merge conflicts), we will not trigger any jobs,
 	// to reduce the load on resources and reduce spam comments which will lead to a better review experience.
